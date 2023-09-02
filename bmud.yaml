@@ -1,0 +1,8 @@
+- !ruby/object:Command 
+  cmd: :cmd_stance
+  help: changes your stance.
+  name: stance
+- !ruby/object:Command
+  cmd: :cmd_attack
+  help: attack someone.
+  name: attack
