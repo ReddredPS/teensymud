@@ -1,7 +1,14 @@
 module Cmd
   def cmd_attack(args)
+    # Input validation
     args = args.split(" ")
-    args.map!(&:downcase)  # Ensure all arguments are converted to lowercase
+    if args.length != 2
+      sendto("Usage: attack <target> <body part>")
+      return
+    end
+
+    target_name = args[0].downcase
+    body_part = args[1].downcase
 
     place = get_object(location)
 
@@ -10,74 +17,44 @@ module Cmd
     else
       target_found = false
 
-      place.characters(id).each do |x|
-        if x.name == args[0].proper_name
+      place.characters(id).each do |target|
+        if target.name.downcase == target_name
           target_found = true
-          atk_r = rand(20) + 1
-          def_r = rand(20) + 1
-          dam_r = rand(6) + 1
+          damage_modifier = 1
 
-          case args[1]
+          # Determine damage based on body part
+          case body_part
           when 'head'
-            atk_r -= 4
-            dam_r += 2
-            target = 'head'
+            damage_modifier += 0.5
+            target_body_part = 'head'
           when 'body'
-            # No need to modify atk_r and dam_r
-            target = 'body'
+            target_body_part = 'body'
           when 'legs'
-            atk_r -= 2
-            dam_r += 1
-            rand(100) > 49 ? target = 'left leg' : target = 'right leg'
+            damage_modifier -= 0.2
+            target_body_part = ['left leg', 'right leg'].sample
           when 'arms'
-            atk_r += 2
-            dam_r -= 1
-            rand(100) > 49 ? target = 'left arm' : target = 'right arm'
+            damage_modifier -= 0.1
+            target_body_part = ['left arm', 'right arm'].sample
           else
-            # No need to modify atk_r and dam_r
-            target = 'body'
+            target_body_part = 'body'
           end
 
-          case self.attributes['stance']
-          when 'relaxed'
-            # No need to modify atk_r and dam_r
-          when 'defensive'
-            atk_r -= 2
-          when 'evasive'
-            dam_r -= 2
-          when 'offensive'
-            atk_r += 2
-            dam_r += 2
-          else
-            sendto("There has been a serious bug, please report it.")
-            return
-          end
+          # Calculate damage
+          attack_roll = rand(20) + 1
+          defense_roll = rand(20) + 1
+          damage = [(attack_roll - defense_roll) * damage_modifier, 1].max.to_i
 
-          case x.attributes['stance']
-          when 'relaxed', 'evasive'
-            def_r += 0
-          when 'defensive'
-            def_r += 2
-          when 'offensive'
-            def_r -= 2
+          if damage > 0
+            target_health = target.attributes['health'] - damage
+            target_health = [target_health, 0].max
+            add_event(id, target.id, :show, "#{name} hits #{target.name} in the #{target_body_part} for #{damage} damage. #{target.name}'s health is now #{target_health}.")
+            add_event(target.id, id, :show, "You have been hit by #{name} in the #{target_body_part} for #{damage} damage. Your health is now #{target_health}.")
+            sendto("You hit #{target.name} in the #{target_body_part} for #{damage} damage.")
+            target.damage('health', damage, id, target.id)
           else
-            add_event(id, x.id, :show, "There has been a serious bug, please report it.")
-            return
-          end
-
-          dam_r = 1 if dam_r <= 0  # Ensure damage is at least 1
-
-          if atk_r > def_r
-            damage_dealt = x.attributes['health'] - dam_r
-            damage_dealt = [damage_dealt, 0].max
-            add_event(id, x.id, :show, "#{name} hits you in the #{target} for #{dam_r} damage. Your health is now #{damage_dealt}.")
-            add_event(x.id, id, :show, "You have been hit by #{name} in the #{target} for #{dam_r} damage. Your health is now #{damage_dealt}.")
-            sendto("You hit #{x.name} in the #{target} for #{dam_r} damage.")
-            x.damage('health', dam_r, id, x.id)
-          else
-            add_event(id, x.id, :show, "#{name} takes a swing at your #{target} and misses you.")
-            add_event(x.id, id, :show, "#{x.name} takes a swing at your #{target} and misses.")
-            sendto("You take a swing at #{x.name}'s #{target} and miss.")
+            add_event(id, target.id, :show, "#{name} takes a swing at #{target.name}'s #{target_body_part} and misses.")
+            add_event(target.id, id, :show, "#{target.name} takes a swing at your #{target_body_part} and misses.")
+            sendto("You take a swing at #{target.name}'s #{target_body_part} and miss.")
           end
         end
       end
