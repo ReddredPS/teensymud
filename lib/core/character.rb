@@ -21,7 +21,7 @@ class Character < GameObject
   logger 'DEBUG'
 
   # The acctid object this character is associated with.
-  property :acctid
+  property :acctid, :attributes
   attr_accessor :account # The reference to the account object
                          # (nil if not logged in)
 
@@ -38,6 +38,10 @@ class Character < GameObject
                                 # character is not logged in.
                                 # We could use get_object(acctid) but
                                 # holding the reference is faster
+    self.attributes = {
+                       'stance'    =>  'relaxed',
+                       'health'    =>  10
+                      }
   end
 
   # Sends a message to the character if they are connected.
@@ -120,6 +124,20 @@ class Character < GameObject
   def show(e)
     sendto(e.msg)
   end
-
+  
+  def damage(stat, amount, id, xid)
+  original_health = self.attributes['health']
+  self.attributes[stat] -= amount
+  
+  if self.attributes['health'] <= 0
+    add_event(id, xid, :show, "You have been defeated by #{id}.")
+    self.attributes['health'] = 10
+  else
+    damage_dealt = original_health - self.attributes['health']
+    add_event(id, xid, :show, "You have dealt #{damage_dealt} damage to #{id}.")
+  end
 end
 
+  # ... (other methods)
+
+end
