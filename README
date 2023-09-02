@@ -46,6 +46,7 @@ The latest release can be found at http://teensymud.kicks-ass.org
 * Currently supports player movement, inventory, get and drop commands
 * Autolook and autoexits 
 * Turn based combat featuring link death and link suicide ;-)
+* Chris Bailey's combat snippet
 * Help system 
 * Password encryption
 * Runtime extensible commands.  Add new commands without rebooting.
@@ -59,7 +60,6 @@ The latest release can be found at http://teensymud.kicks-ass.org
 * Support forum and wiki
 * Portable - runs on Unix, OS/X, Windows
 * Liberal license
-* Battle Snippet added (attack/stance) W.I.P (Bmud)
 
 == Installation
 
