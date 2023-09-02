@@ -47,12 +47,12 @@ module Cmd
           if damage > 0
             target_health = target.attributes['health'] - damage
             target_health = [target_health, 0].max
-            add_event(id, target.id, :show, "#{name} hits #{target.name} in the #{target_body_part} for #{damage} damage. #{target.name}'s health is now #{target_health}.")
+            add_event(id, target.id, :show, "#{name} hits you in the #{target_body_part} for #{damage} damage. Your health is now #{target_health}.")
             add_event(target.id, id, :show, "You have been hit by #{name} in the #{target_body_part} for #{damage} damage. Your health is now #{target_health}.")
             sendto("You hit #{target.name} in the #{target_body_part} for #{damage} damage.")
             target.damage('health', damage, id, target.id)
           else
-            add_event(id, target.id, :show, "#{name} takes a swing at #{target.name}'s #{target_body_part} and misses.")
+            add_event(id, target.id, :show, "#{name} takes a swing at your #{target_body_part} and misses you.")
             add_event(target.id, id, :show, "#{target.name} takes a swing at your #{target_body_part} and misses.")
             sendto("You take a swing at #{target.name}'s #{target_body_part} and miss.")
           end
