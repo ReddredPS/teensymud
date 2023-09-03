@@ -125,19 +125,13 @@ class Character < GameObject
     sendto(e.msg)
   end
   
-  def damage(stat, amount, id, xid)
-  original_health = self.attributes['health']
-  self.attributes[stat] -= amount
-  
-  if self.attributes['health'] <= 0
-    add_event(id, xid, :show, "You have been defeated by #{id}.")
-    self.attributes['health'] = 10
-  else
-    damage_dealt = original_health - self.attributes['health']
-    add_event(id, xid, :show, "You have dealt #{damage_dealt} damage to #{id}.")
+  def damage(stat, amount, attacker_id, target_id) if stat == 'health'
+    self.attributes[stat] -= amount if 
+    self.attributes['health'] <= 0
+      add_event(attacker_id, target_id, :show, "#{name} has been defeated.")
+      self.attributes['health'] = 10 # Reset health to 10 (or your desired value) after defeat
+    end 
+#    else 
+sendto("Invalid stat specified for damage.")
   end
-end
-
-  # ... (other methods)
-
 end
