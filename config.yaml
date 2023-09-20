@@ -74,7 +74,7 @@ server_io: :sockio
 #
 # Order is important here.
 server_filters:  
-  - :debugfilter
+# - :debugfilter
   - :telnetfilter
   - :terminalfilter
   - :colorfilter
