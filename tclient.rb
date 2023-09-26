@@ -272,8 +272,12 @@ def get_options
       opts.separator ""
       opts.separator "Usage: ruby #{$0} [options]"
       opts.separator ""
-      opts.on("-p", "--port PORT", Integer,"Select the port of the mud","(defaults to 4000)") {|myopts.port|}
-      opts.on("-a", "--address URL", String,"Select the address of the mud","  (defaults to \'localhost\')") {|myopts.address|}
+      opts.on("-p", "--port PORT", Integer,
+        "Select the port of the mud",
+        "  (defaults to 4000)") {|myopts.port|}
+      opts.on("-a", "--address URL", String,
+        "Select the address of the mud",
+        "  (defaults to \'localhost\')") {|myopts.address|}
       opts.on("-e", "--[no-]echo", "Run in server echo mode") {|myopts.echo|}
       opts.on("-t", "--[no-]trace", "Trace execution") {|myopts.trace|}
       opts.on("-c", "--[no-]curses", "Run with curses support") {|myopts.curses|}
